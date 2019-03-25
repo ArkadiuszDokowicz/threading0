@@ -10,67 +10,63 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-class CounterVertexThread implements Runnable {
-    int row;//table position
-    String name;
-    Graph obj;
-    int[][]tablica;
-    int size;
-    int vertices;
-    CountDownLatch latch;
-    public CounterVertexThread(String name,int i,int size,int vertices,int[][]tablica,CountDownLatch latch) {
-        this.name=name;
-        this.row=i;
-        this.size=size;
-        //this.vertices=vertices;
-        //this.obj=obj;
-        this.vertices=vertices;
-        this.latch=latch;
-        this.tablica=tablica;
-    }
 
-    public CounterVertexThread(String name, int i, Graph obj, CountDownLatch latch) {
-        this.obj=obj;
-        this.latch=latch;
-        this.name=name;
-        this.row=i;
-    }
 
-    synchronized void  vertexAdd(){
-        this.obj.vertices+=1;}
-    @Override
-    public void run(){
-
-        // System.out.println(this.name+" Started");
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(CounterVertexThread.class.getName()).log(Level.SEVERE, null, ex);
-                }*/
-        //for(int i=0;i<100000;i++){System.out.print(this.name);}
-        for(int j=this.row+1;j<this.obj.size;j++){
-            if(this.obj.tablica[row][j]==1)
-                vertexAdd();
-        }
-        // System.out.println("before"+latch);
-        latch.countDown();
-        ///  System.out.println("after cd"+latch);
-        //   System.out.println(this.name+" Finished");
-
-    }
-}
 /**
  *
  * @author ArekDokowicz
  */
 public class Graph {
-    int[][] tablica;
-    int size;
+    class CounterVertexThread implements Runnable {
+        int row;//table position
+        String name;
+        int size;
+        CountDownLatch latch;
+        public CounterVertexThread(String name,int i,int size,CountDownLatch latch) {
+            this.name=name;
+            this.row=i;
+            this.size=size;
+            this.latch=latch;
+
+        }
+
+
+
+        synchronized void  vertexAdd(){
+           vertices+=1;}
+        @Override
+        public void run(){
+
+            // System.out.println(this.name+" Started");
+                /*try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(CounterVertexThread.class.getName()).log(Level.SEVERE, null, ex);
+                }*/
+            //for(int i=0;i<100000;i++){System.out.print(this.name);}
+            for(int j=this.row+1;j<this.size;j++){
+                if(tablica[row][j]==1)
+                    vertexAdd();
+            }
+            // System.out.println("before"+latch);
+            latch.countDown();
+            ///  System.out.println("after cd"+latch);
+            //   System.out.println(this.name+" Finished");
+
+        }
+    }
+    static int[][] tablica;
+    static int size;
     int vertices;
 
+    public static void setSize(int size) {
+        Graph.size = size;
+    }
+
+
     public void info(){
-        this.print();
-        this.printSize();
+        //this.print();
+        //this.printSize();
         this.printVertices();
     }
     public void printSize(){
@@ -110,25 +106,11 @@ public class Graph {
         this.vertices=0;
         CountDownLatch latch = new CountDownLatch(this.size-1);
 
-        //Lock lock = new ReentrantLock();
-        //lock.lock();
-        //try {
-        //CounterVertexThread[] th_tab=new CounterVertexThread[size-1];
         for(int i=0;i<size-1;i++){
 
-            CounterVertexThread t1= new CounterVertexThread("No."+i,i,this,latch);
+            CounterVertexThread t1= new CounterVertexThread("No."+i,i,size,latch);
             new Thread(t1).start();
-
-            //latch.countDown();
-
-            //  }   } finally {
-            //lock.unlock();
         }
-        //for(int i=0;i<size-1;i++){
-        //  th_tab[i].run();
-
-        // System.out.println(latch);
-        //}
         try {
             latch.await();
         } catch (InterruptedException ex) {

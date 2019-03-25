@@ -60,12 +60,12 @@ public class Exercise1 {
             time_start();
             gnp.singleVertexcounter();
             time_end();
-            // gnp.info();
+             gnp.info();
             givenWritingStringToFile_whenUsingPrintWriter_thenCorrect(printWriter, "single-thread", size, output);
             time_start();
             gnp.multiVertexcounter();
             time_end();
-            // gnp.info();
+             gnp.info();
             givenWritingStringToFile_whenUsingPrintWriter_thenCorrect(printWriter, "multi-thread", size, output);
         }
         // TODO code application logic here
